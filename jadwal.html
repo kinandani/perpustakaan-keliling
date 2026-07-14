@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Jadwal dan rute armada Perpustakaan Keliling. Cek lokasi kunjungan di dekat Anda.">
+    <title>Jadwal &amp; Rute — Perpustakaan Keliling</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Merriweather:wght@400;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .week-tabs {
+            display: flex;
+            gap: .5rem;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+        }
+
+        .day-tab {
+            padding: .55rem 1.1rem;
+            border: 1.5px solid var(--border);
+            border-radius: 9999px;
+            background: var(--white);
+            font-family: var(--font);
+            font-size: .875rem;
+            font-weight: 600;
+            color: var(--dark-3);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .day-tab:hover,
+        .day-tab.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: #fff;
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 2rem;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: .6rem;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--border);
+            border-radius: 99px;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -1.6rem;
+            top: 1.25rem;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--primary);
+            border: 2px solid #fff;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, .2);
+        }
+
+        .timeline-card {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.25rem 1.5rem;
+            transition: var(--transition);
+        }
+
+        .timeline-card:hover {
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary);
+        }
+
+        .timeline-time {
+            font-size: .8rem;
+            font-weight: 700;
+            color: var(--primary);
+            letter-spacing: .04em;
+            text-transform: uppercase;
+            margin-bottom: .35rem;
+        }
+
+        .timeline-location {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: .4rem;
+        }
+
+        .timeline-detail {
+            font-size: .875rem;
+            color: var(--gray);
+        }
+
+        .timeline-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: .5rem;
+            margin-top: .75rem;
+        }
+
+        .rute-layout {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 2rem;
+            align-items: start;
+        }
+
+        .info-panel {
+            background: var(--primary-light);
+            border: 1px solid rgba(37, 99, 235, .2);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+        }
+
+        .info-panel h3 {
+            color: var(--primary-dark);
+            margin-bottom: 1rem;
+            font-size: 1rem;
+        }
+
+        .info-row {
+            display: flex;
+            align-items: flex-start;
+            gap: .75rem;
+            padding: .6rem 0;
+            border-bottom: 1px solid rgba(37, 99, 235, .1);
+            font-size: .875rem;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-row-icon {
+            font-size: 1rem;
+            flex-shrink: 0;
+            color: var(--primary);
+            width: 20px;
+            text-align: center;
+        }
+
+        .info-row-text strong {
+            display: block;
+            color: var(--dark);
+            font-weight: 600;
+        }
+
+        .info-row-text span {
+            color: var(--gray);
+        }
+
+        .armada-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 1.25rem;
+            margin-top: 2rem;
+        }
+
+        .armada-card {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            text-align: center;
+            transition: var(--transition);
+        }
+
+        .armada-card:hover {
+            box-shadow: var(--shadow);
+            transform: translateY(-3px);
+        }
+
+        .armada-icon {
+            font-size: 2.2rem;
+            color: var(--primary);
+            margin-bottom: .75rem;
+        }
+
+        .armada-name {
+            font-weight: 700;
+            font-size: .95rem;
+            margin-bottom: .3rem;
+        }
+
+        @media (max-width: 900px) {
+            .rute-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="navbar-inner">
+            <a href="index.html" class="navbar-brand">
+                <div class="brand-icon"><i class="fas fa-book-open"></i></div>
+                <span>PerpusKeliling</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html">Beranda</a></li>
+                <li><a href="koleksi.html">Koleksi Buku</a></li>
+                <li><a href="jadwal.html" class="active">Jadwal &amp; Rute</a></li>
+                <li><a href="layanan.html">Layanan</a></li>
+                <li><a href="kontak.html">Kontak</a></li>
+                <li><a href="kontak.html#daftar" class="nav-cta">Daftar Anggota</a></li>
+            </ul>
+            <button class="hamburger" id="hamburger" aria-label="Menu">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+        <div class="mobile-menu" id="mobileMenu">
+            <a href="index.html"><i class="fas fa-home"></i> Beranda</a>
+            <a href="koleksi.html"><i class="fas fa-book-open"></i> Koleksi Buku</a>
+            <a href="jadwal.html"><i class="fas fa-calendar-alt"></i> Jadwal &amp; Rute</a>
+            <a href="layanan.html"><i class="fas fa-th-list"></i> Layanan</a>
+            <a href="kontak.html"><i class="fas fa-envelope"></i> Kontak</a>
+        </div>
+    </nav>
+
+    <section class="page-hero">
+        <div class="container">
+            <h1>Jadwal &amp; Rute</h1>
+            <p>Cek lokasi dan waktu kunjungan armada perpustakaan keliling minggu ini.</p>
+            <nav class="breadcrumb">
+                <a href="index.html">Beranda</a>
+                <span>&rsaquo;</span>
+                <span>Jadwal &amp; Rute</span>
+            </nav>
+        </div>
+    </section>
+
+    <section class="section" style="background:var(--bg);">
+        <div class="container">
+            <div class="rute-layout">
+
+                <div>
+                    <div style="margin-bottom:1.5rem;">
+                        <span class="section-label">Jadwal Mingguan</span>
+                        <h2 style="margin-top:.75rem;">Rute Armada Perpustakaan</h2>
+                        <p style="margin-top:.5rem;">Pilih hari untuk melihat jadwal kunjungan lengkap di setiap titik
+                            rute.</p>
+                    </div>
+
+                    <div class="week-tabs">
+                        <button class="day-tab" id="tab-senin" onclick="showDay('senin')">Senin</button>
+                        <button class="day-tab" id="tab-selasa" onclick="showDay('selasa')">Selasa</button>
+                        <button class="day-tab" id="tab-rabu" onclick="showDay('rabu')">Rabu</button>
+                        <button class="day-tab" id="tab-kamis" onclick="showDay('kamis')">Kamis</button>
+                        <button class="day-tab" id="tab-jumat" onclick="showDay('jumat')">Jumat</button>
+                        <button class="day-tab" id="tab-sabtu" onclick="showDay('sabtu')">Sabtu</button>
+                    </div>
+
+                    <div id="scheduleContent"></div>
+                </div>
+
+                <aside>
+                    <div class="info-panel">
+                        <h3><i class="fas fa-info-circle"></i> Informasi Penting</h3>
+                        <div class="info-row">
+                            <span class="info-row-icon"><i class="fas fa-clock"></i></span>
+                            <div class="info-row-text">
+                                <strong>Jam Operasional</strong>
+                                <span>Senin - Sabtu, 08.00 - 15.00 WIB</span>
+                            </div>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-row-icon"><i class="fas fa-hourglass-half"></i></span>
+                            <div class="info-row-text">
+                                <strong>Durasi di Setiap Titik</strong>
+                                <span>90 - 120 menit per lokasi</span>
+                            </div>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-row-icon"><i class="fas fa-bus"></i></span>
+                            <div class="info-row-text">
+                                <strong>Jumlah Armada</strong>
+                                <span>7 unit mobil perpustakaan aktif</span>
+                            </div>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-row-icon"><i class="fas fa-phone"></i></span>
+                            <div class="info-row-text">
+                                <strong>Info &amp; Pengaduan</strong>
+                                <span>(021) 123-4567</span>
+                            </div>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-row-icon"><i class="fas fa-exclamation-triangle"></i></span>
+                            <div class="info-row-text">
+                                <strong>Catatan</strong>
+                                <span>Jadwal dapat berubah sewaktu-waktu. Hubungi kami untuk konfirmasi.</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div
+                        style="background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;margin-top:1.5rem;">
+                        <h3 style="font-size:1rem;margin-bottom:1rem;"><i class="fas fa-search"></i> Cari Rute Terdekat
+                        </h3>
+                        <div class="form-group">
+                            <label class="form-label" for="lokasiInput">Masukkan kelurahan atau kecamatan:</label>
+                            <input type="text" id="lokasiInput" class="form-control"
+                                placeholder="Contoh: Sukamaju, Harapan...">
+                        </div>
+                        <button class="btn btn-primary" id="cariRuteBtn" style="width:100%;justify-content:center;">
+                            <i class="fas fa-map-marker-alt"></i> Cari Rute
+                        </button>
+                        <div id="cariResult" style="margin-top:1rem;"></div>
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" style="background:var(--white);">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-label">Rekap Jadwal</span>
+                <h2>Tabel Rute Lengkap Mingguan</h2>
+                <p>Ringkasan semua titik kunjungan armada perpustakaan keliling dalam satu minggu.</p>
+            </div>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Hari</th>
+                            <th>Lokasi</th>
+                            <th>Waktu</th>
+                            <th>Kecamatan</th>
+                            <th>Armada</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="jadwalBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" style="background:var(--bg);">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-label">Armada Kami</span>
+                <h2>Unit Mobil Perpustakaan</h2>
+                <p>Tujuh armada kami siap melayani komunitas setiap hari kerja di seluruh wilayah kota.</p>
+            </div>
+            <div class="armada-grid">
+                <div class="armada-card">
+                    <div class="armada-icon"><i class="fas fa-bus"></i></div>
+                    <p class="armada-name">Armada A-01</p>
+                    <span class="badge badge-green">Beroperasi</span>
+                    <p style="font-size:.8rem;color:var(--gray);margin-top:.5rem;">Zona Utara</p>
+                </div>
+                <div class="armada-card">
+                    <div class="armada-icon"><i class="fas fa-bus"></i></div>
+                    <p class="armada-name">Armada A-02</p>
+                    <span class="badge badge-green">Beroperasi</span>
+                    <p style="font-size:.8rem;color:var(--gray);margin-top:.5rem;">Zona Selatan</p>
+                </div>
+                <div class="armada-card">
+                    <div class="armada-icon"><i class="fas fa-bus"></i></div>
+                    <p class="armada-name">Armada A-03</p>
+                    <span class="badge badge-green">Beroperasi</span>
+                    <p style="font-size:.8rem;color:var(--gray);margin-top:.5rem;">Zona Timur</p>
+                </div>
+                <div class="armada-card">
+                    <div class="armada-icon"><i class="fas fa-bus"></i></div>
+                    <p class="armada-name">Armada A-04</p>
+                    <span class="badge badge-green">Beroperasi</span>
+                    <p style="font-size:.8rem;color:var(--gray);margin-top:.5rem;">Zona Barat</p>
+                </div>
+                <div class="armada-card">
+                    <div class="armada-icon"><i class="fas fa-bus"></i></div>
+                    <p class="armada-name">Armada A-05</p>
+                    <span class="badge badge-green">Beroperasi</span>
+                    <p style="font-size:.8rem;color:var(--gray);margin-top:.5rem;">Zona Pusat</p>
+                </div>
+                <div class="armada-card">
+                    <div class="armada-icon"><i class="fas fa-bus" style="color:var(--secondary);"></i></div>
+                    <p class="armada-name">Armada A-06</p>
+                    <span class="badge badge-yellow">Perawatan</span>
+                    <p style="font-size:.8rem;color:var(--gray);margin-top:.5rem;">Stand-by</p>
+                </div>
+                <div class="armada-card">
+                    <div class="armada-icon"><i class="fas fa-bus"></i></div>
+                    <p class="armada-name">Armada A-07</p>
+                    <span class="badge badge-green">Beroperasi</span>
+                    <p style="font-size:.8rem;color:var(--gray);margin-top:.5rem;">Zona Sekolah</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div>
+                    <div class="footer-brand">
+                        <div class="brand-icon"><i class="fas fa-book-open"></i></div>
+                        PerpusKeliling
+                    </div>
+                    <p>Membawa literasi langsung ke komunitas Anda sejak 2018.</p>
+                </div>
+                <div>
+                    <p class="footer-heading">Halaman</p>
+                    <ul class="footer-links">
+                        <li><a href="index.html">Beranda</a></li>
+                        <li><a href="koleksi.html">Koleksi Buku</a></li>
+                        <li><a href="jadwal.html">Jadwal &amp; Rute</a></li>
+                        <li><a href="layanan.html">Layanan</a></li>
+                        <li><a href="kontak.html">Kontak</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <p class="footer-heading">Layanan</p>
+                    <ul class="footer-links">
+                        <li><a href="layanan.html">Peminjaman Buku</a></li>
+                        <li><a href="layanan.html">Program Edukasi</a></li>
+                        <li><a href="layanan.html">Donasi Buku</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <p class="footer-heading">Kontak</p>
+                    <ul class="footer-links">
+                        <li><a href="tel:+62211234567"><i class="fas fa-phone"></i> (021) 123-4567</a></li>
+                        <li><a href="mailto:info@perpuskeliling.id"><i class="fas fa-envelope"></i>
+                                info@perpuskeliling.id</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p style="color:rgba(255,255,255,.4);font-size:.85rem;">&copy; 2025 PerpusKeliling.</p>
+                <div class="footer-socials">
+                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <button class="scroll-top" id="scrollTopBtn" aria-label="Kembali ke atas">
+        <i class="fas fa-chevron-up"></i>
+    </button>
+
+    <script src="main.js"></script>
+    <script>
+        var JADWAL = {
+            senin: [
+                { waktu: '08.00 - 10.00', lokasi: 'Kelurahan Sukamaju', kecamatan: 'Cilincing', armada: 'A-01', detail: 'Lapangan parkir depan kantor lurah.', status: 'Terjadwal' },
+                { waktu: '10.30 - 12.00', lokasi: 'SD Negeri 1 Harapan', kecamatan: 'Cilincing', armada: 'A-01', detail: 'Area halaman sekolah, pintu samping.', status: 'Terjadwal' },
+                { waktu: '13.00 - 15.00', lokasi: 'Taman Kota Mekar', kecamatan: 'Penjaringan', armada: 'A-01', detail: 'Sisi selatan taman dekat fountain utama.', status: 'Terjadwal' }
+            ],
+            selasa: [
+                { waktu: '08.00 - 10.00', lokasi: 'Pasar Tradisional Baru', kecamatan: 'Koja', armada: 'A-02', detail: 'Area parkir pasar, masuk dari pintu barat.', status: 'Terjadwal' },
+                { waktu: '10.30 - 12.00', lokasi: 'Posyandu Melati', kecamatan: 'Koja', armada: 'A-02', detail: 'Halaman posyandu, sebelah balai warga.', status: 'Terjadwal' },
+                { waktu: '13.00 - 15.00', lokasi: 'SMP Negeri 7 Pagi', kecamatan: 'Tanjung Priok', armada: 'A-02', detail: 'Lapangan basket, masuk gerbang utama.', status: 'Terjadwal' }
+            ],
+            rabu: [
+                { waktu: '08.00 - 10.00', lokasi: 'Kelurahan Warakas', kecamatan: 'Tanjung Priok', armada: 'A-03', detail: 'Halaman balai kelurahan.', status: 'Terjadwal' },
+                { waktu: '10.30 - 12.00', lokasi: 'Panti Asuhan Al-Amin', kecamatan: 'Tanjung Priok', armada: 'A-03', detail: 'Area terbuka panti, kunjungan rutin.', status: 'Terjadwal' },
+                { waktu: '13.00 - 15.00', lokasi: 'Rusunawa Pluit Blok D', kecamatan: 'Penjaringan', armada: 'A-03', detail: 'Area komunal lantai dasar rusun.', status: 'Terjadwal' }
+            ],
+            kamis: [
+                { waktu: '08.00 - 10.00', lokasi: 'SD Islam Terpadu Nur', kecamatan: 'Pademangan', armada: 'A-04', detail: 'Aula sekolah, koordinasi kepala sekolah.', status: 'Terjadwal' },
+                { waktu: '10.30 - 12.00', lokasi: 'Kelurahan Ancol', kecamatan: 'Pademangan', armada: 'A-04', detail: 'Lapangan serbaguna RT 05.', status: 'Terjadwal' },
+                { waktu: '13.00 - 15.00', lokasi: 'Mall Komunitas Pondok', kecamatan: 'Pademangan', armada: 'A-04', detail: 'Area parkir lantai B1 (outdoor).', status: 'Terjadwal' }
+            ],
+            jumat: [
+                { waktu: '08.00 - 10.00', lokasi: 'Masjid Besar Al-Ikhlas', kecamatan: 'Penjaringan', armada: 'A-05', detail: 'Halaman masjid, setelah shalat subuh.', status: 'Terjadwal' },
+                { waktu: '10.30 - 12.00', lokasi: 'Taman Bacaan Warga', kecamatan: 'Penjaringan', armada: 'A-05', detail: 'Kolaborasi dengan taman bacaan setempat.', status: 'Terjadwal' },
+                { waktu: '13.00 - 14.30', lokasi: 'Cluster Perumahan Baru', kecamatan: 'Penjaringan', armada: 'A-05', detail: 'Gerbang utama cluster, area terbuka.', status: 'Terjadwal' }
+            ],
+            sabtu: [
+                { waktu: '08.00 - 10.30', lokasi: 'Alun-Alun Kota Utara', kecamatan: 'Penjaringan', armada: 'A-07', detail: 'Event Sabtu Literasi, terbuka untuk umum.', status: 'Event Spesial' },
+                { waktu: '11.00 - 13.00', lokasi: 'SMA Negeri 14 Jakarta', kecamatan: 'Cilincing', armada: 'A-07', detail: 'Kunjungan khusus siswa dan workshop.', status: 'Terjadwal' }
+            ]
+        };
+
+        var SEMUA_JADWAL = [
+            { no: 1, hari: 'Senin', lokasi: 'Kelurahan Sukamaju', waktu: '08.00-10.00', kecamatan: 'Cilincing', armada: 'A-01', status: 'Terjadwal' },
+            { no: 2, hari: 'Senin', lokasi: 'SD Negeri 1 Harapan', waktu: '10.30-12.00', kecamatan: 'Cilincing', armada: 'A-01', status: 'Terjadwal' },
+            { no: 3, hari: 'Senin', lokasi: 'Taman Kota Mekar', waktu: '13.00-15.00', kecamatan: 'Penjaringan', armada: 'A-01', status: 'Terjadwal' },
+            { no: 4, hari: 'Selasa', lokasi: 'Pasar Tradisional Baru', waktu: '08.00-10.00', kecamatan: 'Koja', armada: 'A-02', status: 'Terjadwal' },
+            { no: 5, hari: 'Selasa', lokasi: 'Posyandu Melati', waktu: '10.30-12.00', kecamatan: 'Koja', armada: 'A-02', status: 'Terjadwal' },
+            { no: 6, hari: 'Selasa', lokasi: 'SMP Negeri 7 Pagi', waktu: '13.00-15.00', kecamatan: 'Tanjung Priok', armada: 'A-02', status: 'Terjadwal' },
+            { no: 7, hari: 'Rabu', lokasi: 'Kelurahan Warakas', waktu: '08.00-10.00', kecamatan: 'Tanjung Priok', armada: 'A-03', status: 'Terjadwal' },
+            { no: 8, hari: 'Rabu', lokasi: 'Panti Asuhan Al-Amin', waktu: '10.30-12.00', kecamatan: 'Tanjung Priok', armada: 'A-03', status: 'Terjadwal' },
+            { no: 9, hari: 'Rabu', lokasi: 'Rusunawa Pluit Blok D', waktu: '13.00-15.00', kecamatan: 'Penjaringan', armada: 'A-03', status: 'Terjadwal' },
+            { no: 10, hari: 'Kamis', lokasi: 'SD Islam Terpadu Nur', waktu: '08.00-10.00', kecamatan: 'Pademangan', armada: 'A-04', status: 'Terjadwal' },
+            { no: 11, hari: 'Kamis', lokasi: 'Kelurahan Ancol', waktu: '10.30-12.00', kecamatan: 'Pademangan', armada: 'A-04', status: 'Terjadwal' },
+            { no: 12, hari: 'Kamis', lokasi: 'Mall Komunitas Pondok', waktu: '13.00-15.00', kecamatan: 'Pademangan', armada: 'A-04', status: 'Terjadwal' },
+            { no: 13, hari: 'Jumat', lokasi: 'Masjid Besar Al-Ikhlas', waktu: '08.00-10.00', kecamatan: 'Penjaringan', armada: 'A-05', status: 'Terjadwal' },
+            { no: 14, hari: 'Jumat', lokasi: 'Taman Bacaan Warga', waktu: '10.30-12.00', kecamatan: 'Penjaringan', armada: 'A-05', status: 'Terjadwal' },
+            { no: 15, hari: 'Jumat', lokasi: 'Cluster Perumahan Baru', waktu: '13.00-14.30', kecamatan: 'Penjaringan', armada: 'A-05', status: 'Terjadwal' },
+            { no: 16, hari: 'Sabtu', lokasi: 'Alun-Alun Kota Utara', waktu: '08.00-10.30', kecamatan: 'Penjaringan', armada: 'A-07', status: 'Event Spesial' },
+            { no: 17, hari: 'Sabtu', lokasi: 'SMA Negeri 14 Jakarta', waktu: '11.00-13.00', kecamatan: 'Cilincing', armada: 'A-07', status: 'Terjadwal' }
+        ];
+
+        function showDay(day) {
+            document.querySelectorAll('.day-tab').forEach(function (btn) {
+                btn.classList.remove('active');
+            });
+            var activeTab = document.getElementById('tab-' + day);
+            if (activeTab) activeTab.classList.add('active');
+
+            var data = JADWAL[day];
+            if (!data || data.length === 0) {
+                document.getElementById('scheduleContent').innerHTML = '<div class="alert alert-info">Tidak ada jadwal untuk hari ini.</div>';
+                return;
+            }
+
+            var html = '<div class="timeline">';
+            for (var i = 0; i < data.length; i++) {
+                var item = data[i];
+                var statusBadge = item.status === 'Event Spesial'
+                    ? '<span class="badge badge-yellow"><i class="fas fa-star"></i> ' + item.status + '</span>'
+                    : '<span class="badge badge-green"><i class="fas fa-check"></i> ' + item.status + '</span>';
+
+                html += '<div class="timeline-item">';
+                html += '<div class="timeline-card">';
+                html += '<div class="timeline-time">' + item.waktu + '</div>';
+                html += '<div class="timeline-location"><i class="fas fa-map-marker-alt" style="color:var(--primary);"></i> ' + item.lokasi + '</div>';
+                html += '<div class="timeline-detail">' + item.detail + '</div>';
+                html += '<div class="timeline-meta">';
+                html += '<span class="badge badge-blue"><i class="fas fa-map"></i> ' + item.kecamatan + '</span>';
+                html += '<span class="badge badge-gray"><i class="fas fa-bus"></i> ' + item.armada + '</span>';
+                html += statusBadge;
+                html += '</div></div></div>';
+            }
+            html += '</div>';
+
+            document.getElementById('scheduleContent').innerHTML = html;
+        }
+
+        function renderTable() {
+            var tbody = document.getElementById('jadwalBody');
+            var html = '';
+            for (var i = 0; i < SEMUA_JADWAL.length; i++) {
+                var row = SEMUA_JADWAL[i];
+                var statusClass = row.status === 'Event Spesial' ? 'badge-yellow' : 'badge-green';
+                html += '<tr>';
+                html += '<td>' + row.no + '</td>';
+                html += '<td><strong>' + row.hari + '</strong></td>';
+                html += '<td>' + row.lokasi + '</td>';
+                html += '<td>' + row.waktu + '</td>';
+                html += '<td>' + row.kecamatan + '</td>';
+                html += '<td><span class="badge badge-gray"><i class="fas fa-bus"></i> ' + row.armada + '</span></td>';
+                html += '<td><span class="badge ' + statusClass + '">' + row.status + '</span></td>';
+                html += '</tr>';
+            }
+            tbody.innerHTML = html;
+        }
+
+        document.getElementById('cariRuteBtn').addEventListener('click', function () {
+            var query = document.getElementById('lokasiInput').value.trim().toLowerCase();
+            var result = document.getElementById('cariResult');
+
+            if (!query) {
+                result.innerHTML = '<div class="alert alert-warning">Masukkan nama lokasi terlebih dahulu.</div>';
+                return;
+            }
+
+            var found = [];
+            for (var i = 0; i < SEMUA_JADWAL.length; i++) {
+                var row = SEMUA_JADWAL[i];
+                if (row.lokasi.toLowerCase().indexOf(query) !== -1 || row.kecamatan.toLowerCase().indexOf(query) !== -1) {
+                    found.push(row);
+                }
+            }
+
+            if (found.length === 0) {
+                result.innerHTML = '<div class="alert alert-error">Tidak ditemukan rute untuk "<strong>' + query + '</strong>".</div>';
+                return;
+            }
+
+            var html = '<div class="alert alert-success">Ditemukan <strong>' + found.length + '</strong> jadwal:</div>';
+            for (var j = 0; j < found.length; j++) {
+                html += '<div style="background:var(--white);border:1px solid var(--border);border-radius:var(--radius-sm);padding:.75rem;margin-bottom:.5rem;font-size:.875rem;">';
+                html += '<strong>' + found[j].hari + '</strong> - ' + found[j].waktu + '<br>';
+                html += '<i class="fas fa-map-marker-alt" style="color:var(--primary);"></i> ' + found[j].lokasi + ' (' + found[j].kecamatan + ')';
+                html += '</div>';
+            }
+            result.innerHTML = html;
+        });
+
+        document.getElementById('lokasiInput').addEventListener('keydown', function (e) {
+            if (e.key === 'Enter') document.getElementById('cariRuteBtn').click();
+        });
+
+        var hariMap = ['', 'senin', 'selasa', 'rabu', 'kamis', 'jumat', 'sabtu', ''];
+        var today = new Date().getDay();
+        var dayKey = hariMap[today] || 'senin';
+        showDay(dayKey);
+        renderTable();
+    </script>
+</body>
+
+</html>
