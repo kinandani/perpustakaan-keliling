@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Layanan Perpustakaan Keliling — peminjaman buku, program edukasi, donasi, dan workshop literasi.">
+    <title>Layanan — Perpustakaan Keliling</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .layanan-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:1.75rem; }
+        .layanan-card { background:var(--white); border:1px solid var(--border); border-radius:var(--radius-lg); padding:2.5rem; display:flex; gap:1.5rem; align-items:flex-start; transition:var(--transition); }
+        .layanan-card:hover { box-shadow:var(--shadow-lg); border-color:var(--primary); transform:translateY(-3px); }
+        .layanan-icon-box { width:64px; height:64px; border-radius:var(--radius); display:flex; align-items:center; justify-content:center; font-size:1.5rem; flex-shrink:0; }
+        .layanan-card h3 { margin-bottom:.5rem; }
+        .layanan-card p { font-size:.9rem; margin-bottom:1rem; }
+        .steps-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:1.5rem; position:relative; }
+        .steps-grid::before { content:''; position:absolute; top:2.5rem; left:10%; right:10%; height:2px; background:linear-gradient(90deg,var(--primary),var(--accent)); }
+        .step-item { text-align:center; position:relative; z-index:1; }
+        .step-num { width:56px; height:56px; background:linear-gradient(135deg,var(--primary),var(--primary-dark)); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.2rem; font-weight:800; color:#fff; margin:0 auto 1rem; box-shadow:0 4px 12px rgba(37,99,235,.3); }
+        .step-item h4 { font-size:.95rem; margin-bottom:.5rem; }
+        .step-item p { font-size:.83rem; }
+        .donasi-layout { display:grid; grid-template-columns:1fr 1fr; gap:3rem; align-items:center; }
+        .donasi-info h2 { margin-bottom:1rem; }
+        .donasi-info p { margin-bottom:1.5rem; }
+        .donasi-stats { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:2rem; }
+        .donasi-stat { background:var(--primary-light); border-radius:var(--radius-sm); padding:1rem; text-align:center; }
+        .donasi-stat-num { font-size:1.5rem; font-weight:800; color:var(--primary); display:block; }
+        .donasi-stat-label { font-size:.78rem; color:var(--gray); }
+        .donasi-form { background:var(--white); border:1px solid var(--border); border-radius:var(--radius-lg); padding:2.5rem; }
+        .donasi-form h3 { margin-bottom:1.5rem; }
+        .testimonial-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.75rem; }
+        .testimonial-card { background:var(--white); border:1px solid var(--border); border-radius:var(--radius); padding:2rem; position:relative; transition:var(--transition); }
+        .testimonial-card:hover { box-shadow:var(--shadow-lg); transform:translateY(-4px); }
+        .testimonial-card::before { content:'\201C'; position:absolute; top:.75rem; left:1.25rem; font-size:4rem; color:var(--primary); opacity:.2; font-family:Georgia,serif; line-height:1; }
+        .testimonial-stars { color:var(--secondary); margin-bottom:1rem; font-size:.95rem; }
+        .testimonial-text { font-size:.9rem; font-style:italic; margin-bottom:1.25rem; color:var(--dark-3); }
+        .testimonial-author { display:flex; align-items:center; gap:.75rem; }
+        .author-avatar { width:44px; height:44px; border-radius:50%; background:var(--primary-light); display:flex; align-items:center; justify-content:center; font-size:1.1rem; color:var(--primary); flex-shrink:0; }
+        .author-name { font-weight:700; font-size:.9rem; }
+        .author-role { font-size:.8rem; color:var(--gray); }
+        .faq-list { max-width:760px; margin:0 auto; }
+        .faq-item { border:1px solid var(--border); border-radius:var(--radius-sm); overflow:hidden; margin-bottom:.75rem; background:var(--white); }
+        .faq-btn { width:100%; display:flex; justify-content:space-between; align-items:center; padding:1.15rem 1.5rem; background:none; border:none; text-align:left; cursor:pointer; font-size:.95rem; font-weight:600; color:var(--dark); gap:1rem; transition:var(--transition); }
+        .faq-btn:hover, .faq-item.open .faq-btn { color:var(--primary); }
+        .faq-icon { font-size:.85rem; color:var(--gray); transition:transform .3s ease; flex-shrink:0; }
+        .faq-item.open .faq-icon { transform:rotate(180deg); color:var(--primary); }
+        .faq-answer { max-height:0; overflow:hidden; transition:max-height .35s ease, padding .35s ease; }
+        .faq-item.open .faq-answer { max-height:500px; }
+        .faq-answer-inner { padding:0 1.5rem 1.25rem; font-size:.9rem; color:var(--gray); line-height:1.75; }
+        @media (max-width:900px) { .layanan-grid,.donasi-layout,.testimonial-grid { grid-template-columns:1fr; } .steps-grid { grid-template-columns:repeat(2,1fr); } .steps-grid::before { display:none; } }
+        @media (max-width:480px) { .steps-grid { grid-template-columns:1fr; } }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-inner">
+            <a href="index.html" class="navbar-brand">
+                <div class="brand-icon"><i class="fas fa-book-open"></i></div>
+                <span>PerpusKeliling</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html">Beranda</a></li>
+                <li><a href="koleksi.html">Koleksi Buku</a></li>
+                <li><a href="jadwal.html">Jadwal &amp; Rute</a></li>
+                <li><a href="layanan.html" class="active">Layanan</a></li>
+                <li><a href="kontak.html">Kontak</a></li>
+                <li><a href="kontak.html#daftar" class="nav-cta">Daftar Anggota</a></li>
+            </ul>
+            <button class="hamburger" id="hamburger" aria-label="Menu"><i class="fas fa-bars"></i></button>
+        </div>
+        <div class="mobile-menu" id="mobileMenu">
+            <a href="index.html"><i class="fas fa-home"></i> Beranda</a>
+            <a href="koleksi.html"><i class="fas fa-book-open"></i> Koleksi Buku</a>
+            <a href="jadwal.html"><i class="fas fa-calendar-alt"></i> Jadwal &amp; Rute</a>
+            <a href="layanan.html"><i class="fas fa-th-list"></i> Layanan</a>
+            <a href="kontak.html"><i class="fas fa-envelope"></i> Kontak</a>
+        </div>
+    </nav>
+
+    <section class="page-hero">
+        <div class="container">
+            <h1>Layanan Kami</h1>
+            <p>Berbagai layanan perpustakaan keliling yang hadir untuk mendukung literasi Anda.</p>
+            <nav class="breadcrumb"><a href="index.html">Beranda</a><span>&rsaquo;</span><span>Layanan</span></nav>
+        </div>
+    </section>
+
+    <section class="section" style="background:var(--bg);">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-label">Apa yang Kami Tawarkan</span>
+                <h2>Layanan Utama Kami</h2>
+                <p>Dirancang untuk memudahkan akses literasi bagi seluruh lapisan masyarakat.</p>
+            </div>
+            <div class="layanan-grid">
+                <div class="layanan-card">
+                    <div class="layanan-icon-box" style="background:#EFF6FF;color:var(--primary);"><i class="fas fa-book-reader"></i></div>
+                    <div><h3>Peminjaman Buku</h3><p>Pinjam hingga 3 buku sekaligus selama 14 hari tanpa biaya. Tersedia ribuan judul dari berbagai genre untuk semua usia.</p><a href="koleksi.html" class="btn btn-outline btn-sm">Lihat Katalog <i class="fas fa-arrow-right"></i></a></div>
+                </div>
+                <div class="layanan-card">
+                    <div class="layanan-icon-box" style="background:#F0FDF4;color:var(--accent);"><i class="fas fa-graduation-cap"></i></div>
+                    <div><h3>Program Edukasi</h3><p>Workshop mendongeng, diskusi buku, dan kelas literasi yang dirancang interaktif untuk anak-anak dan remaja setiap minggu.</p><a href="kontak.html" class="btn btn-outline btn-sm">Daftar Program <i class="fas fa-arrow-right"></i></a></div>
+                </div>
+                <div class="layanan-card">
+                    <div class="layanan-icon-box" style="background:#FFFBEB;color:var(--secondary);"><i class="fas fa-hand-holding-heart"></i></div>
+                    <div><h3>Donasi Buku</h3><p>Donasikan buku Anda untuk memperkaya koleksi perpustakaan. Setiap buku yang Anda donasikan akan membuka peluang bagi orang lain untuk belajar.</p><a href="#donasi" class="btn btn-outline btn-sm">Donasi Sekarang <i class="fas fa-arrow-right"></i></a></div>
+                </div>
+                <div class="layanan-card">
+                    <div class="layanan-icon-box" style="background:#F3E8FF;color:#9333EA;"><i class="fas fa-chalkboard-teacher"></i></div>
+                    <div><h3>Workshop Literasi</h3><p>Sesi pelatihan menulis kreatif, public speaking, dan pengembangan diri yang rutin diselenggarakan bekerja sama dengan komunitas lokal.</p><a href="kontak.html" class="btn btn-outline btn-sm">Info Workshop <i class="fas fa-arrow-right"></i></a></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" style="background:var(--white);">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-label">Cara Meminjam</span>
+                <h2>Proses Peminjaman Buku</h2>
+                <p>Empat langkah mudah untuk meminjam buku dari perpustakaan keliling.</p>
+            </div>
+            <div class="steps-grid">
+                <div class="step-item"><div class="step-num">1</div><h4>Daftar Anggota</h4><p>Isi formulir pendaftaran anggota secara gratis online atau langsung di armada kami.</p></div>
+                <div class="step-item"><div class="step-num">2</div><h4>Cek Jadwal</h4><p>Lihat jadwal dan rute armada yang paling dekat dengan lokasi Anda.</p></div>
+                <div class="step-item"><div class="step-num">3</div><h4>Pilih Buku</h4><p>Temukan buku yang Anda inginkan dari katalog atau langsung di armada saat kunjungan.</p></div>
+                <div class="step-item"><div class="step-num">4</div><h4>Kembalikan Tepat Waktu</h4><p>Kembalikan buku dalam 14 hari ke armada terdekat. Tidak ada denda, hanya tanggung jawab.</p></div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="donasi" style="background:var(--bg);">
+        <div class="container">
+            <div class="donasi-layout">
+                <div class="donasi-info">
+                    <span class="section-label">Program Donasi</span>
+                    <h2 style="margin-top:.75rem;">Donasikan Buku Anda</h2>
+                    <p>Buku bekas yang masih layak baca dari Anda dapat membuka jendela dunia bagi anak-anak yang membutuhkan.</p>
+                    <div class="donasi-stats">
+                        <div class="donasi-stat"><span class="donasi-stat-num" data-target="1250" data-suffix="+">0</span><span class="donasi-stat-label">Buku Diterima Tahun Ini</span></div>
+                        <div class="donasi-stat"><span class="donasi-stat-num" data-target="340" data-suffix="+">0</span><span class="donasi-stat-label">Donatur Aktif</span></div>
+                        <div class="donasi-stat"><span class="donasi-stat-num" data-target="48">0</span><span class="donasi-stat-label">Komunitas Terbantu</span></div>
+                        <div class="donasi-stat"><span class="donasi-stat-num" data-target="5" data-suffix=" kota">0</span><span class="donasi-stat-label">Kota Terjangkau</span></div>
+                    </div>
+                    <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;">
+                        <h4 style="font-size:.95rem;margin-bottom:.75rem;"><i class="fas fa-info-circle" style="color:var(--primary);"></i> Syarat Buku Donasi</h4>
+                        <ul style="list-style:none;font-size:.875rem;color:var(--gray);">
+                            <li style="padding:.3rem 0;"><i class="fas fa-check" style="color:var(--accent);margin-right:.5rem;"></i> Kondisi baik, tidak robek atau basah</li>
+                            <li style="padding:.3rem 0;"><i class="fas fa-check" style="color:var(--accent);margin-right:.5rem;"></i> Semua genre diterima</li>
+                            <li style="padding:.3rem 0;"><i class="fas fa-check" style="color:var(--accent);margin-right:.5rem;"></i> Buku anak &amp; pendidikan sangat dibutuhkan</li>
+                            <li style="padding:.3rem 0;"><i class="fas fa-times" style="color:var(--danger);margin-right:.5rem;"></i> Buku rusak berat tidak diterima</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="donasi-form">
+                    <h3><i class="fas fa-gift" style="color:var(--secondary);"></i> Formulir Donasi</h3>
+                    <form id="formDonasi">
+                        <div class="form-group">
+                            <label class="form-label" for="namaDonatur">Nama Lengkap</label>
+                            <input type="text" id="namaDonatur" class="form-control" placeholder="Nama Anda" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="emailDonatur">Email</label>
+                            <input type="email" id="emailDonatur" class="form-control" placeholder="email@contoh.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="jumlahBuku">Jumlah Buku</label>
+                            <input type="number" id="jumlahBuku" class="form-control" placeholder="Contoh: 5" min="1" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="jenisBuku">Jenis Buku</label>
+                            <select id="jenisBuku" class="form-control" required>
+                                <option value="">Pilih jenis buku</option>
+                                <option value="anak">Buku Anak-Anak</option>
+                                <option value="fiksi">Fiksi &amp; Novel</option>
+                                <option value="nonfiksi">Non-Fiksi</option>
+                                <option value="pelajaran">Buku Pelajaran</option>
+                                <option value="campuran">Campuran</option>
+                            </select>
+                        </div>
+                        <div id="alertDonasi"></div>
+                        <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;"><i class="fas fa-paper-plane"></i> Kirim Permohonan Donasi</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" style="background:var(--white);">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-label">Kata Mereka</span>
+                <h2>Testimoni Anggota &amp; Mitra</h2>
+            </div>
+            <div class="testimonial-grid">
+                <div class="testimonial-card">
+                    <div class="testimonial-stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                    <p class="testimonial-text">Anak saya jadi rajin membaca sejak PerpusKeliling rutin datang ke depan sekolah. Pelayanannya ramah dan koleksinya sangat beragam.</p>
+                    <div class="testimonial-author"><div class="author-avatar"><i class="fas fa-user"></i></div><div><p class="author-name">Ibu Sari Dewi</p><p class="author-role">Wali Murid SD, Jakarta Utara</p></div></div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                    <p class="testimonial-text">Program literasi dari PerpusKeliling sangat membantu kegiatan belajar di sekolah kami. Anak-anak antusias saat mobil perpustakaan datang!</p>
+                    <div class="testimonial-author"><div class="author-avatar"><i class="fas fa-user"></i></div><div><p class="author-name">Bapak Andi Kurniawan</p><p class="author-role">Kepala SDN 05, Tanjung Priok</p></div></div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i></div>
+                    <p class="testimonial-text">Sebagai mahasiswa, saya sangat terbantu dengan katalog digital PerpusKeliling. Bisa cek buku dari HP sebelum datang ke armadanya.</p>
+                    <div class="testimonial-author"><div class="author-avatar"><i class="fas fa-user-graduate"></i></div><div><p class="author-name">Rizky Pratama</p><p class="author-role">Mahasiswa Universitas Indonesia</p></div></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" style="background:var(--bg);">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-label">FAQ</span>
+                <h2>Pertanyaan yang Sering Diajukan</h2>
+            </div>
+            <div class="faq-list">
+                <div class="faq-item"><button class="faq-btn" onclick="toggleFaq(this)">Apakah layanan perpustakaan keliling ini gratis?<i class="fas fa-chevron-down faq-icon"></i></button><div class="faq-answer"><div class="faq-answer-inner">Ya, seluruh layanan peminjaman buku perpustakaan keliling kami sepenuhnya gratis. Anda hanya perlu mendaftar sebagai anggota, tanpa biaya pendaftaran maupun biaya peminjaman.</div></div></div>
+                <div class="faq-item"><button class="faq-btn" onclick="toggleFaq(this)">Berapa lama masa peminjaman buku?<i class="fas fa-chevron-down faq-icon"></i></button><div class="faq-answer"><div class="faq-answer-inner">Masa peminjaman adalah 14 hari kalender. Buku dapat dipinjam maksimal 3 judul dalam satu waktu. Perpanjangan dapat dilakukan satu kali dengan menghubungi petugas armada.</div></div></div>
+                <div class="faq-item"><button class="faq-btn" onclick="toggleFaq(this)">Bagaimana cara mendaftar menjadi anggota?<i class="fas fa-chevron-down faq-icon"></i></button><div class="faq-answer"><div class="faq-answer-inner">Pendaftaran dapat dilakukan secara online melalui halaman Kontak kami, atau langsung di armada perpustakaan keliling saat kunjungan. Cukup bawa KTP atau kartu pelajar.</div></div></div>
+                <div class="faq-item"><button class="faq-btn" onclick="toggleFaq(this)">Apa yang terjadi jika buku terlambat dikembalikan?<i class="fas fa-chevron-down faq-icon"></i></button><div class="faq-answer"><div class="faq-answer-inner">Kami tidak mengenakan denda keterlambatan. Namun, anggota yang sering terlambat akan diingatkan dan hak peminjaman bisa ditangguhkan sementara untuk menjaga ketertiban koleksi.</div></div></div>
+                <div class="faq-item"><button class="faq-btn" onclick="toggleFaq(this)">Daerah mana saja yang dilayani perpustakaan keliling?<i class="fas fa-chevron-down faq-icon"></i></button><div class="faq-answer"><div class="faq-answer-inner">Saat ini kami melayani wilayah Jakarta Utara, meliputi kecamatan Cilincing, Koja, Tanjung Priok, Pademangan, dan Penjaringan. Rencana ekspansi ke wilayah lain sedang dalam proses.</div></div></div>
+                <div class="faq-item"><button class="faq-btn" onclick="toggleFaq(this)">Bagaimana cara mengajukan kunjungan ke sekolah atau komunitas?<i class="fas fa-chevron-down faq-icon"></i></button><div class="faq-answer"><div class="faq-answer-inner">Ajukan permohonan kunjungan melalui formulir di halaman Kontak kami dengan subjek "Kunjungan Sekolah/Komunitas". Tim kami akan menghubungi Anda dalam 3 hari kerja untuk konfirmasi jadwal.</div></div></div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div><div class="footer-brand"><div class="brand-icon"><i class="fas fa-book-open"></i></div>PerpusKeliling</div><p>Membawa literasi langsung ke komunitas Anda sejak 2018.</p></div>
+                <div><p class="footer-heading">Halaman</p><ul class="footer-links"><li><a href="index.html">Beranda</a></li><li><a href="koleksi.html">Koleksi Buku</a></li><li><a href="jadwal.html">Jadwal &amp; Rute</a></li><li><a href="layanan.html">Layanan</a></li><li><a href="kontak.html">Kontak</a></li></ul></div>
+                <div><p class="footer-heading">Layanan</p><ul class="footer-links"><li><a href="layanan.html">Peminjaman Buku</a></li><li><a href="layanan.html">Program Edukasi</a></li><li><a href="layanan.html">Donasi Buku</a></li></ul></div>
+                <div><p class="footer-heading">Kontak</p><ul class="footer-links"><li><a href="tel:+62211234567"><i class="fas fa-phone"></i> (021) 123-4567</a></li><li><a href="mailto:info@perpuskeliling.id"><i class="fas fa-envelope"></i> info@perpuskeliling.id</a></li></ul></div>
+            </div>
+            <div class="footer-bottom">
+                <p style="color:rgba(255,255,255,.4);font-size:.85rem;">&copy; 2025 PerpusKeliling.</p>
+                <div class="footer-socials"><a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a><a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a><a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a></div>
+            </div>
+        </div>
+    </footer>
+    <button class="scroll-top" id="scrollTopBtn" aria-label="Kembali ke atas"><i class="fas fa-chevron-up"></i></button>
+
+    <script src="main.js"></script>
+    <script>
+        function toggleFaq(btn) {
+            var item = btn.parentElement;
+            var isOpen = item.classList.contains('open');
+            document.querySelectorAll('.faq-item.open').forEach(function(other) { other.classList.remove('open'); });
+            if (!isOpen) item.classList.add('open');
+        }
+
+        document.getElementById('formDonasi').addEventListener('submit', function(e) {
+            e.preventDefault();
+            var nama = document.getElementById('namaDonatur').value.trim();
+            var email = document.getElementById('emailDonatur').value.trim();
+            var jumlah = document.getElementById('jumlahBuku').value;
+            var jenis = document.getElementById('jenisBuku').value;
+            var alertEl = document.getElementById('alertDonasi');
+            if (!nama || !email || !jumlah || !jenis) { alertEl.innerHTML = '<div class="alert alert-error"><i class="fas fa-exclamation-circle"></i> Harap lengkapi semua kolom formulir.</div>'; return; }
+            alertEl.innerHTML = '<div class="alert alert-success"><i class="fas fa-check-circle"></i> Terima kasih, <strong>' + nama + '</strong>! Permohonan donasi ' + jumlah + ' buku Anda sudah kami terima. Tim kami akan menghubungi Anda segera.</div>';
+            this.reset();
+            showToast('Formulir donasi berhasil dikirim!', 'success');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Hubungi Perpustakaan Keliling — daftar anggota, ajukan pertanyaan, dan sampaikan saran.">
+    <title>Kontak — Perpustakaan Keliling</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .kontak-layout { display:grid; grid-template-columns:1fr 1.5fr; gap:3rem; align-items:start; }
+        .kontak-info-item { display:flex; align-items:flex-start; gap:1rem; padding:1.25rem; background:var(--white); border:1px solid var(--border); border-radius:var(--radius); margin-bottom:1rem; transition:var(--transition); }
+        .kontak-info-item:hover { border-color:var(--primary); box-shadow:var(--shadow-sm); }
+        .kontak-info-icon { width:48px; height:48px; border-radius:var(--radius-sm); display:flex; align-items:center; justify-content:center; font-size:1.1rem; flex-shrink:0; }
+        .kontak-info-text strong { display:block; font-size:.9rem; color:var(--dark); margin-bottom:.2rem; }
+        .kontak-info-text span { font-size:.875rem; color:var(--gray); }
+        .kontak-info-text a { color:var(--primary); }
+        .kontak-info-text a:hover { color:var(--primary-dark); }
+        .jam-table { width:100%; font-size:.875rem; }
+        .jam-table td { padding:.35rem 0; color:var(--gray); }
+        .jam-table td:last-child { text-align:right; font-weight:600; color:var(--dark); }
+        .jam-table tr:not(:last-child) td { border-bottom:1px solid var(--border); }
+        .form-card { background:var(--white); border:1px solid var(--border); border-radius:var(--radius-lg); padding:2.5rem; }
+        .form-tabs { display:flex; gap:.5rem; margin-bottom:2rem; background:var(--bg); padding:.35rem; border-radius:9999px; }
+        .form-tab { flex:1; padding:.6rem 1rem; border:none; border-radius:9999px; background:transparent; font-size:.875rem; font-weight:600; color:var(--gray); cursor:pointer; transition:var(--transition); text-align:center; }
+        .form-tab.active { background:var(--white); color:var(--primary); box-shadow:var(--shadow-sm); }
+        .form-panel { display:none; }
+        .form-panel.active { display:block; }
+        .map-box { background:linear-gradient(135deg,var(--dark-2),var(--dark)); border-radius:var(--radius-lg); height:300px; display:flex; flex-direction:column; align-items:center; justify-content:center; color:#fff; text-align:center; padding:2rem; margin-top:1.5rem; }
+        .map-box i { font-size:3rem; color:#60A5FA; margin-bottom:1rem; }
+        .map-box h3 { color:#fff; margin-bottom:.5rem; font-size:1rem; }
+        .map-box p { color:rgba(255,255,255,.5); font-size:.875rem; margin-bottom:1.25rem; }
+        .form-row { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+        .char-count { font-size:.78rem; color:var(--gray-light); text-align:right; margin-top:.3rem; }
+        .char-count.warn { color:var(--danger); }
+        @media (max-width:900px) { .kontak-layout { grid-template-columns:1fr; } }
+        @media (max-width:480px) { .form-row { grid-template-columns:1fr; } .form-card { padding:1.5rem; } }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-inner">
+            <a href="index.html" class="navbar-brand">
+                <div class="brand-icon"><i class="fas fa-book-open"></i></div>
+                <span>PerpusKeliling</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html">Beranda</a></li>
+                <li><a href="koleksi.html">Koleksi Buku</a></li>
+                <li><a href="jadwal.html">Jadwal &amp; Rute</a></li>
+                <li><a href="layanan.html">Layanan</a></li>
+                <li><a href="kontak.html" class="active">Kontak</a></li>
+                <li><a href="kontak.html#daftar" class="nav-cta">Daftar Anggota</a></li>
+            </ul>
+            <button class="hamburger" id="hamburger" aria-label="Menu"><i class="fas fa-bars"></i></button>
+        </div>
+        <div class="mobile-menu" id="mobileMenu">
+            <a href="index.html"><i class="fas fa-home"></i> Beranda</a>
+            <a href="koleksi.html"><i class="fas fa-book-open"></i> Koleksi Buku</a>
+            <a href="jadwal.html"><i class="fas fa-calendar-alt"></i> Jadwal &amp; Rute</a>
+            <a href="layanan.html"><i class="fas fa-th-list"></i> Layanan</a>
+            <a href="kontak.html"><i class="fas fa-envelope"></i> Kontak</a>
+        </div>
+    </nav>
+
+    <section class="page-hero">
+        <div class="container">
+            <h1>Hubungi Kami</h1>
+            <p>Ada pertanyaan atau ingin bergabung? Kami siap membantu Anda.</p>
+            <nav class="breadcrumb"><a href="index.html">Beranda</a><span>&rsaquo;</span><span>Kontak</span></nav>
+        </div>
+    </section>
+
+    <section class="section" style="background:var(--bg);" id="daftar">
+        <div class="container">
+            <div class="kontak-layout">
+                <div>
+                    <span class="section-label">Informasi Kami</span>
+                    <h2 style="margin:.75rem 0 .75rem;">Temukan &amp; Hubungi Kami</h2>
+                    <p style="margin-bottom:2rem;">Kami berkomitmen merespons setiap pesan dalam 1&times;24 jam pada hari kerja.</p>
+
+                    <div class="kontak-info-item">
+                        <div class="kontak-info-icon" style="background:#EFF6FF;color:var(--primary);"><i class="fas fa-phone"></i></div>
+                        <div class="kontak-info-text"><strong>Telepon</strong><span><a href="tel:+62211234567">(021) 123-4567</a> &mdash; Senin-Jumat 08.00&ndash;16.00</span></div>
+                    </div>
+                    <div class="kontak-info-item">
+                        <div class="kontak-info-icon" style="background:#F0FDF4;color:var(--accent);"><i class="fas fa-envelope"></i></div>
+                        <div class="kontak-info-text"><strong>Email</strong><span><a href="mailto:info@perpuskeliling.id">info@perpuskeliling.id</a></span></div>
+                    </div>
+                    <div class="kontak-info-item">
+                        <div class="kontak-info-icon" style="background:#FFFBEB;color:var(--secondary);"><i class="fab fa-whatsapp"></i></div>
+                        <div class="kontak-info-text"><strong>WhatsApp</strong><span><a href="https://wa.me/6281234567890" target="_blank" rel="noopener">+62 812-3456-7890</a></span></div>
+                    </div>
+                    <div class="kontak-info-item">
+                        <div class="kontak-info-icon" style="background:#FEF2F2;color:#EF4444;"><i class="fas fa-map-marker-alt"></i></div>
+                        <div class="kontak-info-text"><strong>Kantor Pusat</strong><span>Jl. Pustaka Raya No.1, Kel. Harapan,<br>Kec. Cilincing, Jakarta Utara 14150</span></div>
+                    </div>
+
+                    <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;margin-top:1rem;">
+                        <h3 style="font-size:.95rem;margin-bottom:1rem;"><i class="fas fa-clock" style="color:var(--primary);"></i> Jam Operasional</h3>
+                        <table class="jam-table">
+                            <tbody>
+                                <tr><td>Senin &ndash; Jumat</td><td>08.00 &ndash; 16.00 WIB</td></tr>
+                                <tr><td>Sabtu</td><td>08.00 &ndash; 13.00 WIB</td></tr>
+                                <tr><td>Minggu &amp; Hari Libur</td><td>Tutup</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                        <iframe
+                            src="https://maps.google.com/maps?q=Jl.+Pustaka+Raya+No.1,+Kel.+Harapan,+Kec.+Cilincing,+Jakarta+Utara&t=&z=15&ie=UTF8&iwloc=&output=embed"
+                            width="100%"
+                            height="300"
+                            style="border: 0; border-radius: var(--radius-lg); margin-top: 1.5rem;"
+                            allowfullscreen=""
+                            loading="lazy"
+                            referrerpolicy="no-referrer-when-downgrade">
+                        </iframe>
+                </div>
+
+                <div id="formSection">
+                    <div class="form-card">
+                        <div class="form-tabs">
+                            <button class="form-tab active" id="tab-hubungi" onclick="switchTab('hubungi')"><i class="fas fa-comment"></i> Hubungi Kami</button>
+                            <button class="form-tab" id="tab-daftar" onclick="switchTab('daftar')"><i class="fas fa-user-plus"></i> Daftar Anggota</button>
+                        </div>
+
+                        <div class="form-panel active" id="panel-hubungi">
+                            <h3 style="margin-bottom:1.5rem;">Kirim Pesan kepada Kami</h3>
+                            <form id="formHubungi" novalidate>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label" for="namaHubungi">Nama Lengkap <span style="color:var(--danger);">*</span></label>
+                                        <input type="text" id="namaHubungi" class="form-control" placeholder="Nama Anda" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label" for="emailHubungi">Email <span style="color:var(--danger);">*</span></label>
+                                        <input type="email" id="emailHubungi" class="form-control" placeholder="email@contoh.com" required>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="telpHubungi">Nomor Telepon</label>
+                                    <input type="tel" id="telpHubungi" class="form-control" placeholder="08xx-xxxx-xxxx">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="subjectHubungi">Subjek <span style="color:var(--danger);">*</span></label>
+                                    <select id="subjectHubungi" class="form-control" required>
+                                        <option value="">Pilih Subjek</option>
+                                        <option value="info">Informasi Umum</option>
+                                        <option value="pinjam">Peminjaman Buku</option>
+                                        <option value="jadwal">Jadwal &amp; Rute</option>
+                                        <option value="donasi">Donasi Buku</option>
+                                        <option value="workshop">Workshop &amp; Edukasi</option>
+                                        <option value="saran">Saran &amp; Masukan</option>
+                                        <option value="lainnya">Lainnya</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="pesanHubungi">Pesan <span style="color:var(--danger);">*</span></label>
+                                    <textarea id="pesanHubungi" class="form-control" rows="5" placeholder="Tuliskan pesan Anda..." required maxlength="1000"></textarea>
+                                    <p class="char-count" id="charCount">0 / 1000 karakter</p>
+                                </div>
+                                <div id="alertHubungi"></div>
+                                <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;" id="btnHubungi"><i class="fas fa-paper-plane"></i> Kirim Pesan</button>
+                            </form>
+                        </div>
+
+                        <div class="form-panel" id="panel-daftar">
+                            <h3 style="margin-bottom:.5rem;">Pendaftaran Anggota Baru</h3>
+                            <p style="font-size:.875rem;color:var(--gray);margin-bottom:1.5rem;">Daftar gratis dan nikmati akses ke seluruh koleksi perpustakaan keliling!</p>
+                            <form id="formDaftar" novalidate>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label" for="namaDepan">Nama Depan <span style="color:var(--danger);">*</span></label>
+                                        <input type="text" id="namaDepan" class="form-control" placeholder="Nama depan" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label" for="namaBelakang">Nama Belakang</label>
+                                        <input type="text" id="namaBelakang" class="form-control" placeholder="Nama belakang">
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label" for="emailDaftar">Email <span style="color:var(--danger);">*</span></label>
+                                        <input type="email" id="emailDaftar" class="form-control" placeholder="email@contoh.com" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label" for="tglLahir">Tanggal Lahir <span style="color:var(--danger);">*</span></label>
+                                        <input type="date" id="tglLahir" class="form-control" required>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="teleponDaftar">Nomor HP/WhatsApp <span style="color:var(--danger);">*</span></label>
+                                    <input type="tel" id="teleponDaftar" class="form-control" placeholder="08xx-xxxx-xxxx" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="jenisAnggota">Kategori Anggota <span style="color:var(--danger);">*</span></label>
+                                    <select id="jenisAnggota" class="form-control" required>
+                                        <option value="">Pilih Kategori</option>
+                                        <option value="umum">Umum (18 tahun ke atas)</option>
+                                        <option value="pelajar">Pelajar SD/SMP/SMA</option>
+                                        <option value="mahasiswa">Mahasiswa</option>
+                                        <option value="lansia">Lansia (60 tahun ke atas)</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="alamatDaftar">Alamat Lengkap <span style="color:var(--danger);">*</span></label>
+                                    <textarea id="alamatDaftar" class="form-control" rows="2" placeholder="Jl. Contoh No.1, Kelurahan, Kecamatan, Kota" required></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label style="display:flex;align-items:flex-start;gap:.65rem;cursor:pointer;font-size:.875rem;color:var(--dark-3);">
+                                        <input type="checkbox" id="setujuSyarat" style="width:16px;height:16px;margin-top:2px;accent-color:var(--primary);flex-shrink:0;" required>
+                                        Saya menyetujui <a href="#" style="color:var(--primary);">Syarat dan Ketentuan</a> serta <a href="#" style="color:var(--primary);">Kebijakan Privasi</a>.
+                                    </label>
+                                </div>
+                                <div id="alertDaftar"></div>
+                                <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;" id="btnDaftar"><i class="fas fa-user-plus"></i> Daftarkan Saya Sekarang</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div><div class="footer-brand"><div class="brand-icon"><i class="fas fa-book-open"></i></div>PerpusKeliling</div><p>Membawa literasi langsung ke komunitas Anda sejak 2018.</p></div>
+                <div><p class="footer-heading">Halaman</p><ul class="footer-links"><li><a href="index.html">Beranda</a></li><li><a href="koleksi.html">Koleksi Buku</a></li><li><a href="jadwal.html">Jadwal &amp; Rute</a></li><li><a href="layanan.html">Layanan</a></li><li><a href="kontak.html">Kontak</a></li></ul></div>
+                <div><p class="footer-heading">Layanan</p><ul class="footer-links"><li><a href="layanan.html">Peminjaman Buku</a></li><li><a href="layanan.html">Program Edukasi</a></li><li><a href="layanan.html">Donasi Buku</a></li></ul></div>
+                <div><p class="footer-heading">Kontak</p><ul class="footer-links"><li><a href="tel:+62211234567"><i class="fas fa-phone"></i> (021) 123-4567</a></li><li><a href="mailto:info@perpuskeliling.id"><i class="fas fa-envelope"></i> info@perpuskeliling.id</a></li></ul></div>
+            </div>
+            <div class="footer-bottom">
+                <p style="color:rgba(255,255,255,.4);font-size:.85rem;">&copy; 2025 PerpusKeliling.</p>
+                <div class="footer-socials"><a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a><a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a><a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a></div>
+            </div>
+        </div>
+    </footer>
+    <button class="scroll-top" id="scrollTopBtn" aria-label="Kembali ke atas"><i class="fas fa-chevron-up"></i></button>
+
+    <script src="main.js"></script>
+    <script>
+        function switchTab(tabName) {
+            document.querySelectorAll('.form-panel').forEach(function(panel) { panel.classList.remove('active'); });
+            document.querySelectorAll('.form-tab').forEach(function(btn) { btn.classList.remove('active'); });
+            document.getElementById('panel-' + tabName).classList.add('active');
+            document.getElementById('tab-' + tabName).classList.add('active');
+        }
+
+        if (window.location.hash === '#daftar') { switchTab('daftar'); setTimeout(function() { document.getElementById('formSection').scrollIntoView({ behavior:'smooth' }); }, 300); }
+
+        document.getElementById('pesanHubungi').addEventListener('input', function() {
+            var len = this.value.length;
+            var counter = document.getElementById('charCount');
+            counter.textContent = len + ' / 1000 karakter';
+            counter.classList.toggle('warn', len > 900);
+        });
+
+        document.getElementById('tglLahir').max = new Date().toISOString().split('T')[0];
+
+        document.getElementById('formHubungi').addEventListener('submit', function(e) {
+            e.preventDefault();
+            var nama = document.getElementById('namaHubungi').value.trim();
+            var email = document.getElementById('emailHubungi').value.trim();
+            var subject = document.getElementById('subjectHubungi').value;
+            var pesan = document.getElementById('pesanHubungi').value.trim();
+            var alertEl = document.getElementById('alertHubungi');
+            var btn = document.getElementById('btnHubungi');
+            if (!nama || nama.length < 2) { alertEl.innerHTML = '<div class="alert alert-error"><i class="fas fa-exclamation-circle"></i> Nama lengkap harus diisi (minimal 2 karakter).</div>'; return; }
+            if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { alertEl.innerHTML = '<div class="alert alert-error"><i class="fas fa-exclamation-circle"></i> Format email tidak valid.</div>'; return; }
+            if (!subject) { alertEl.innerHTML = '<div class="alert alert-error"><i class="fas fa-exclamation-circle"></i> Silakan pilih subjek pesan.</div>'; return; }
+            if (!pesan || pesan.length < 10) { alertEl.innerHTML = '<div class="alert alert-error"><i class="fas fa-exclamation-circle"></i> Pesan terlalu singkat (minimal 10 karakter).</div>'; return; }
+            alertEl.innerHTML = '';
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengirim...';
+            btn.disabled = true;
+            setTimeout(function() {
+                alertEl.innerHTML = '<div class="alert alert-success"><i class="fas fa-check-circle"></i> Pesan berhasil dikirim! Kami akan membalas dalam 1&times;24 jam. Terima kasih, <strong>' + nama + '</strong>!</div>';
+                document.getElementById('formHubungi').reset();
+                document.getElementById('charCount').textContent = '0 / 1000 karakter';
+                btn.innerHTML = '<i class="fas fa-paper-plane"></i> Kirim Pesan';
+                btn.disabled = false;
+                showToast('Pesan berhasil terkirim!', 'success');
+            }, 1500);
+        });
+
+        document.getElementById('formDaftar').addEventListener('submit', function(e) {
+            e.preventDefault();
+            var namaDepan = document.getElementById('namaDepan').value.trim();
+            var email = document.getElementById('emailDaftar').value.trim();
+            var tglLahir = document.getElementById('tglLahir').value;
+            var telp = document.getElementById('teleponDaftar').value.trim();
+            var jenis = document.getElementById('jenisAnggota').value;
+            var alamat = document.getElementById('alamatDaftar').value.trim();
+            var setuju = document.getElementById('setujuSyarat').checked;
+            var alertEl = document.getElementById('alertDaftar');
+            var btn = document.getElementById('btnDaftar');
+            if (!namaDepan || namaDepan.length < 2) { alertEl.innerHTML = '<div class="alert alert-error"><i class="fas fa-exclamation-circle"></i> Nama depan harus diisi.</div>'; return; }
+            if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { alertEl.innerHTML = '<div class="alert alert-error"><i class="fas fa-exclamation-circle"></i> Format email tidak valid.</div>'; return; }
+            if (!tglLahir) { alertEl.innerHTML = '<div class="alert alert-error"><i class="fas fa-exclamation-circle"></i> Tanggal lahir harus diisi.</div>'; return; }
+            if (!telp || !/^[0-9+\-\s]{9,15}$/.test(telp)) { alertEl.innerHTML = '<div class="alert alert-error"><i class="fas fa-exclamation-circle"></i> Nomor telepon tidak valid.</div>'; return; }
+            if (!jenis) { alertEl.innerHTML = '<div class="alert alert-error"><i class="fas fa-exclamation-circle"></i> Pilih kategori anggota Anda.</div>'; return; }
+            if (!alamat || alamat.length < 10) { alertEl.innerHTML = '<div class="alert alert-error"><i class="fas fa-exclamation-circle"></i> Alamat lengkap harus diisi.</div>'; return; }
+            if (!setuju) { alertEl.innerHTML = '<div class="alert alert-error"><i class="fas fa-exclamation-circle"></i> Anda harus menyetujui syarat dan ketentuan.</div>'; return; }
+            alertEl.innerHTML = '';
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mendaftarkan...';
+            btn.disabled = true;
+            setTimeout(function() {
+                var noAnggota = 'PK-' + new Date().getFullYear() + '-' + Math.floor(1000 + Math.random() * 9000);
+                alertEl.innerHTML = '<div class="alert alert-success"><i class="fas fa-check-circle"></i> <strong>Pendaftaran Berhasil!</strong><br>Selamat datang, <strong>' + namaDepan + '</strong>!<br>Nomor anggota Anda: <strong>' + noAnggota + '</strong><br>Kartu anggota digital akan dikirim ke <strong>' + email + '</strong>.</div>';
+                document.getElementById('formDaftar').reset();
+                btn.innerHTML = '<i class="fas fa-user-plus"></i> Daftarkan Saya Sekarang';
+                btn.disabled = false;
+                showToast('Pendaftaran berhasil! No: ' + noAnggota, 'success', 5000);
+            }, 2000);
+        });
+    </script>
+</body>
+</html>
+
+
