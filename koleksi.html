@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Katalog koleksi buku Perpustakaan Keliling. Cari dan temukan buku favorit Anda.">
+    <title>Koleksi Buku — Perpustakaan Keliling</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Merriweather:wght@400;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .katalog-layout {
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            gap: 2rem;
+            align-items: start;
+        }
+
+        .filter-sidebar {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            position: sticky;
+            top: 84px;
+        }
+
+        .filter-title {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 1.25rem;
+            padding-bottom: .75rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .filter-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .filter-group-title {
+            font-size: .8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            color: var(--gray);
+            margin-bottom: .75rem;
+        }
+
+        .filter-option {
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+            padding: .4rem 0;
+            cursor: pointer;
+            font-size: .9rem;
+            color: var(--dark-3);
+        }
+
+        .filter-option input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--primary);
+            cursor: pointer;
+        }
+
+        .filter-count {
+            margin-left: auto;
+            font-size: .75rem;
+            background: var(--border);
+            color: var(--gray);
+            padding: .1rem .45rem;
+            border-radius: 9999px;
+        }
+
+        .katalog-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .book-card {
+            background: var(--white);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            overflow: hidden;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+        }
+
+        .book-card:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-5px);
+            border-color: var(--primary);
+        }
+
+        .book-cover {
+            width: 100%;
+            height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            position: relative;
+            color: rgba(0, 0, 0, .3);
+        }
+
+        .status-tag {
+            position: absolute;
+            top: .65rem;
+            right: .65rem;
+            font-size: .7rem;
+            font-weight: 700;
+            padding: .2rem .55rem;
+            border-radius: 9999px;
+        }
+
+        .book-body {
+            padding: 1rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .book-title {
+            font-size: .9rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: .25rem;
+            margin-top: .4rem;
+            line-height: 1.3;
+        }
+
+        .book-author {
+            font-size: .78rem;
+            color: var(--gray);
+            margin-bottom: .5rem;
+        }
+
+        .book-rating {
+            font-size: .8rem;
+            color: var(--secondary-dark);
+            font-weight: 600;
+            margin-bottom: .65rem;
+        }
+
+        .book-actions {
+            display: flex;
+            gap: .4rem;
+            margin-top: auto;
+        }
+
+        .book-actions .btn {
+            flex: 1;
+            justify-content: center;
+        }
+
+        .result-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: .75rem;
+        }
+
+        .result-count {
+            font-size: .9rem;
+            color: var(--gray);
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: .5rem;
+            margin-top: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .page-btn {
+            width: 40px;
+            height: 40px;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            background: var(--white);
+            cursor: pointer;
+            font-family: var(--font);
+            font-size: .9rem;
+            font-weight: 600;
+            color: var(--dark-3);
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .page-btn:hover,
+        .page-btn.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: #fff;
+        }
+
+        .page-btn:disabled {
+            opacity: .4;
+            cursor: not-allowed;
+        }
+
+        .book-detail-header {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .book-detail-cover {
+            width: 110px;
+            height: 150px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            flex-shrink: 0;
+            color: rgba(0, 0, 0, .3);
+        }
+
+        .book-detail-desc {
+            font-size: .9rem;
+            line-height: 1.75;
+        }
+
+        @media (max-width: 900px) {
+            .katalog-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .filter-sidebar {
+                position: static;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .katalog-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="navbar-inner">
+            <a href="index.html" class="navbar-brand">
+                <div class="brand-icon"><i class="fas fa-book-open"></i></div>
+                <span>PerpusKeliling</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html">Beranda</a></li>
+                <li><a href="koleksi.html" class="active">Koleksi Buku</a></li>
+                <li><a href="jadwal.html">Jadwal &amp; Rute</a></li>
+                <li><a href="layanan.html">Layanan</a></li>
+                <li><a href="kontak.html">Kontak</a></li>
+                <li><a href="kontak.html#daftar" class="nav-cta">Daftar Anggota</a></li>
+            </ul>
+            <button class="hamburger" id="hamburger" aria-label="Menu">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+        <div class="mobile-menu" id="mobileMenu">
+            <a href="index.html"><i class="fas fa-home"></i> Beranda</a>
+            <a href="koleksi.html"><i class="fas fa-book-open"></i> Koleksi Buku</a>
+            <a href="jadwal.html"><i class="fas fa-calendar-alt"></i> Jadwal &amp; Rute</a>
+            <a href="layanan.html"><i class="fas fa-th-list"></i> Layanan</a>
+            <a href="kontak.html"><i class="fas fa-envelope"></i> Kontak</a>
+        </div>
+    </nav>
+
+    <section class="page-hero">
+        <div class="container">
+            <h1>Koleksi Buku</h1>
+            <p>Jelajahi ribuan judul dari berbagai kategori. Temukan buku yang Anda cari.</p>
+            <nav class="breadcrumb">
+                <a href="index.html">Beranda</a>
+                <span>&rsaquo;</span>
+                <span>Koleksi Buku</span>
+            </nav>
+            <div style="margin-top:1.75rem;">
+                <div class="search-bar">
+                    <label for="searchInput" class="sr-only">Cari buku</label>
+                    <input type="search" id="searchInput" class="form-control" placeholder="Cari judul atau penulis...">
+                    <button class="btn btn-secondary" id="searchBtn">
+                        <i class="fas fa-search"></i> Cari
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" style="background:var(--bg);">
+        <div class="container">
+            <div class="katalog-layout">
+
+                <aside class="filter-sidebar">
+                    <h2 class="filter-title"><i class="fas fa-filter"></i> Filter</h2>
+                    <div class="filter-group">
+                        <p class="filter-group-title">Kategori</p>
+                        <label class="filter-option"><input type="checkbox" class="filter-kategori" value="Fiksi"
+                                checked> Fiksi <span class="filter-count">38</span></label>
+                        <label class="filter-option"><input type="checkbox" class="filter-kategori" value="Non-Fiksi"
+                                checked> Non-Fiksi <span class="filter-count">52</span></label>
+                        <label class="filter-option"><input type="checkbox" class="filter-kategori" value="Anak-Anak"
+                                checked> Anak-Anak <span class="filter-count">45</span></label>
+                        <label class="filter-option"><input type="checkbox" class="filter-kategori" value="Sains"
+                                checked> Sains &amp; Teknologi <span class="filter-count">29</span></label>
+                        <label class="filter-option"><input type="checkbox" class="filter-kategori" value="Sejarah"
+                                checked> Sejarah <span class="filter-count">22</span></label>
+                        <label class="filter-option"><input type="checkbox" class="filter-kategori" value="Motivasi"
+                                checked> Motivasi <span class="filter-count">18</span></label>
+                    </div>
+                    <div class="filter-group">
+                        <p class="filter-group-title">Status</p>
+                        <label class="filter-option"><input type="checkbox" class="filter-status" value="Tersedia"
+                                checked> Tersedia <span class="filter-count">142</span></label>
+                        <label class="filter-option"><input type="checkbox" class="filter-status" value="Dipinjam"
+                                checked> Sedang Dipinjam <span class="filter-count">62</span></label>
+                    </div>
+                    <button class="btn btn-outline" id="resetFilter" style="width:100%;justify-content:center;">
+                        <i class="fas fa-redo"></i> Reset Filter
+                    </button>
+                </aside>
+
+                <main>
+                    <div class="result-bar">
+                        <p class="result-count" id="resultCount">Menampilkan <strong>0</strong> buku</p>
+                        <div style="display:flex;align-items:center;gap:.5rem;font-size:.9rem;">
+                            <label for="sortSelect" class="sr-only">Urutkan</label>
+                            <select id="sortSelect" class="form-control" style="width:auto;padding:.45rem .85rem;">
+                                <option value="default">Urutkan: Default</option>
+                                <option value="judul">Judul A-Z</option>
+                                <option value="rating">Rating Tertinggi</option>
+                                <option value="tahun">Tahun Terbaru</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="katalog-grid" id="bookGrid"></div>
+
+                    <div id="emptyMsg" class="hidden" style="text-align:center;padding:3rem 1rem;">
+                        <i class="fas fa-box-open fa-3x" style="color:var(--gray-light);margin-bottom:1rem;"></i>
+                        <h3>Buku Tidak Ditemukan</h3>
+                        <p>Coba ubah kata kunci atau filter pencarian Anda.</p>
+                    </div>
+
+                    <div class="pagination" id="pagination"></div>
+                </main>
+            </div>
+        </div>
+    </section>
+
+    <div class="modal-overlay" id="bookModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h2 id="modalBookTitle" style="font-size:1.1rem;">Detail Buku</h2>
+                <button class="modal-close" onclick="toggleModal('bookModal', false)">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div id="modalBookContent"></div>
+            <div style="display:flex;gap:.75rem;margin-top:1.5rem;">
+                <button class="btn btn-primary" id="modalPinjamBtn" style="flex:1;justify-content:center;"
+                    onclick="pinjamBuku()">
+                    <i class="fas fa-book-reader"></i> Pinjam Buku Ini
+                </button>
+                <button class="btn btn-outline" onclick="toggleModal('bookModal', false)"
+                    style="justify-content:center;">Tutup</button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div>
+                    <div class="footer-brand">
+                        <div class="brand-icon"><i class="fas fa-book-open"></i></div>
+                        PerpusKeliling
+                    </div>
+                    <p>Membawa literasi langsung ke komunitas Anda sejak 2018.</p>
+                </div>
+                <div>
+                    <p class="footer-heading">Halaman</p>
+                    <ul class="footer-links">
+                        <li><a href="index.html">Beranda</a></li>
+                        <li><a href="koleksi.html">Koleksi Buku</a></li>
+                        <li><a href="jadwal.html">Jadwal &amp; Rute</a></li>
+                        <li><a href="layanan.html">Layanan</a></li>
+                        <li><a href="kontak.html">Kontak</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <p class="footer-heading">Layanan</p>
+                    <ul class="footer-links">
+                        <li><a href="layanan.html">Peminjaman Buku</a></li>
+                        <li><a href="layanan.html">Program Edukasi</a></li>
+                        <li><a href="layanan.html">Donasi Buku</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <p class="footer-heading">Kontak</p>
+                    <ul class="footer-links">
+                        <li><a href="tel:+62211234567"><i class="fas fa-phone"></i> (021) 123-4567</a></li>
+                        <li><a href="mailto:info@perpuskeliling.id"><i class="fas fa-envelope"></i>
+                                info@perpuskeliling.id</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p style="color:rgba(255,255,255,.4);font-size:.85rem;">&copy; 2025 PerpusKeliling.</p>
+                <div class="footer-socials">
+                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <button class="scroll-top" id="scrollTopBtn" aria-label="Kembali ke atas">
+        <i class="fas fa-chevron-up"></i>
+    </button>
+
+    <script src="main.js"></script>
+    <script>
+        var BUKU_DATA = [
+            { id: 1, judul: "Laskar Pelangi", penulis: "Andrea Hirata", kategori: "Fiksi", status: "Tersedia", rating: 4.9, tahun: 2005, warna: "#DBEAFE", icon: "fa-book", isbn: "978-979-1341-00-1", deskripsi: "Novel yang mengisahkan perjuangan anak-anak Belitung untuk mengenyam pendidikan." },
+            { id: 2, judul: "Bumi Manusia", penulis: "Pramoedya A. Toer", kategori: "Fiksi", status: "Tersedia", rating: 4.8, tahun: 1980, warna: "#D1FAE5", icon: "fa-book", isbn: "978-979-407-059-3", deskripsi: "Karya agung Pramoedya tentang perjuangan seorang pemuda pribumi di era kolonial." },
+            { id: 3, judul: "Filosofi Teras", penulis: "Henry Manampiring", kategori: "Motivasi", status: "Dipinjam", rating: 4.7, tahun: 2018, warna: "#FEF3C7", icon: "fa-lightbulb", isbn: "978-602-06-1493-9", deskripsi: "Panduan menjalani hidup tenang berdasarkan filosofi Stoik untuk pembaca Indonesia." },
+            { id: 4, judul: "Si Anak Pemberani", penulis: "Tere Liye", kategori: "Fiksi", status: "Tersedia", rating: 4.6, tahun: 2019, warna: "#FEE2E2", icon: "fa-book", isbn: "978-602-291-551-7", deskripsi: "Kisah petualangan anak-anak di pedalaman Sumatra yang penuh keberanian." },
+            { id: 5, judul: "Sapiens", penulis: "Yuval Noah Harari", kategori: "Sejarah", status: "Tersedia", rating: 4.8, tahun: 2011, warna: "#E0F2FE", icon: "fa-landmark", isbn: "978-0-06-231609-7", deskripsi: "Sejarah singkat umat manusia dari masa prasejarah hingga revolusi industri." },
+            { id: 6, judul: "Dunia Sophie", penulis: "Jostein Gaarder", kategori: "Non-Fiksi", status: "Tersedia", rating: 4.5, tahun: 1991, warna: "#F3E8FF", icon: "fa-book-open", isbn: "978-979-22-1251-4", deskripsi: "Novel filsafat yang mengajak pembaca menjelajahi sejarah filsafat Barat." },
+            { id: 7, judul: "Atomic Habits", penulis: "James Clear", kategori: "Motivasi", status: "Dipinjam", rating: 4.9, tahun: 2018, warna: "#FFFBEB", icon: "fa-lightbulb", isbn: "978-0-7352-1129-2", deskripsi: "Panduan ilmiah untuk membangun kebiasaan kecil yang menghasilkan perubahan besar." },
+            { id: 8, judul: "Kecil-Kecil Punya Karya", penulis: "Berbagai Penulis", kategori: "Anak-Anak", status: "Tersedia", rating: 4.4, tahun: 2020, warna: "#FDF2F8", icon: "fa-child", isbn: "978-979-22-5678-1", deskripsi: "Antologi karya tulis anak-anak Indonesia yang menginspirasi." },
+            { id: 9, judul: "Brief History of Time", penulis: "Stephen Hawking", kategori: "Sains", status: "Tersedia", rating: 4.7, tahun: 1988, warna: "#E0E7FF", icon: "fa-flask", isbn: "978-0-553-38016-3", deskripsi: "Eksplorasi ilmu fisika modern dari Big Bang hingga lubang hitam." },
+            { id: 10, judul: "Negeri 5 Menara", penulis: "Ahmad Fuadi", kategori: "Fiksi", status: "Tersedia", rating: 4.6, tahun: 2009, warna: "#FFF7ED", icon: "fa-book", isbn: "978-979-22-4931-8", deskripsi: "Kisah inspiratif santri dari Sumatra yang mengejar mimpi ke berbagai penjuru dunia." },
+            { id: 11, judul: "Perahu Kertas", penulis: "Dee Lestari", kategori: "Fiksi", status: "Dipinjam", rating: 4.5, tahun: 2009, warna: "#EFF6FF", icon: "fa-book", isbn: "978-979-22-5143-4", deskripsi: "Kisah cinta antara Kugy dan Keenan yang penuh mimpi dan perjalanan menemukan diri." },
+            { id: 12, judul: "Matematika Asyik", penulis: "Tim Penerbit", kategori: "Anak-Anak", status: "Tersedia", rating: 4.3, tahun: 2022, warna: "#F0FDF4", icon: "fa-calculator", isbn: "978-979-12-3456-0", deskripsi: "Buku belajar matematika yang dikemas menyenangkan untuk anak usia 6-12 tahun." },
+            { id: 13, judul: "Rich Dad Poor Dad", penulis: "Robert Kiyosaki", kategori: "Motivasi", status: "Tersedia", rating: 4.4, tahun: 1997, warna: "#FFFBEB", icon: "fa-lightbulb", isbn: "978-1-5154-3003-5", deskripsi: "Pelajaran tentang keuangan dan investasi berdasarkan perbandingan dua figur ayah." },
+            { id: 14, judul: "Sejarah Indonesia Modern", penulis: "M.C. Ricklefs", kategori: "Sejarah", status: "Tersedia", rating: 4.6, tahun: 2001, warna: "#FEF3C7", icon: "fa-landmark", isbn: "978-0-230-54685-1", deskripsi: "Kajian mendalam tentang sejarah Indonesia dari abad ke-16 hingga era reformasi." },
+            { id: 15, judul: "Coding untuk Anak", penulis: "DK Publishing", kategori: "Sains", status: "Dipinjam", rating: 4.5, tahun: 2021, warna: "#EDE9FE", icon: "fa-laptop", isbn: "978-0-24-137896-2", deskripsi: "Panduan belajar pemrograman yang ramah anak dengan proyek-proyek menyenangkan." },
+            { id: 16, judul: "The Alchemist", penulis: "Paulo Coelho", kategori: "Fiksi", status: "Tersedia", rating: 4.8, tahun: 1988, warna: "#FDF4FF", icon: "fa-book", isbn: "978-0-06-231500-7", deskripsi: "Kisah seorang gembala muda Spanyol yang menempuh perjalanan menuju mimpinya." },
+            { id: 17, judul: "Ensiklopedia Anak", penulis: "Tim Ilmu", kategori: "Anak-Anak", status: "Tersedia", rating: 4.7, tahun: 2020, warna: "#ECFDF5", icon: "fa-book-open", isbn: "978-602-123-789-4", deskripsi: "Ensiklopedia lengkap yang menjelaskan sains, alam, dan teknologi untuk anak." },
+            { id: 18, judul: "7 Habits", penulis: "Stephen Covey", kategori: "Motivasi", status: "Dipinjam", rating: 4.7, tahun: 1989, warna: "#F0F9FF", icon: "fa-lightbulb", isbn: "978-0-7432-6951-3", deskripsi: "Tujuh kebiasaan yang membantu seseorang menjadi lebih efektif dalam kehidupan." },
+            { id: 19, judul: "Hujan", penulis: "Tere Liye", kategori: "Fiksi", status: "Tersedia", rating: 4.5, tahun: 2016, warna: "#EFF6FF", icon: "fa-book", isbn: "978-602-291-240-0", deskripsi: "Kisah masa depan tentang seorang gadis bernama Lail dan tumpukan kenangan." },
+            { id: 20, judul: "Ketika Aku Belum Dewasa", penulis: "Asma Nadia", kategori: "Fiksi", status: "Tersedia", rating: 4.3, tahun: 2015, warna: "#FDF2F8", icon: "fa-book", isbn: "978-602-219-135-4", deskripsi: "Novel remaja yang mengangkat tema persahabatan dan perjalanan tumbuh dewasa." }
+        ];
+
+        var state = {
+            query: '',
+            kategori: ['Fiksi', 'Non-Fiksi', 'Anak-Anak', 'Sains', 'Sejarah', 'Motivasi'],
+            status: ['Tersedia', 'Dipinjam'],
+            sort: 'default',
+            page: 1,
+            perPage: 12,
+            selected: null
+        };
+
+        function renderGrid() {
+            var grid = document.getElementById('bookGrid');
+            var emptyMsg = document.getElementById('emptyMsg');
+            var resCount = document.getElementById('resultCount');
+
+            var filtered = [];
+            for (var i = 0; i < BUKU_DATA.length; i++) {
+                var b = BUKU_DATA[i];
+                var matchQuery = b.judul.toLowerCase().indexOf(state.query.toLowerCase()) !== -1 ||
+                    b.penulis.toLowerCase().indexOf(state.query.toLowerCase()) !== -1;
+                var matchKat = state.kategori.indexOf(b.kategori) !== -1;
+                var matchStatus = state.status.indexOf(b.status) !== -1;
+                if (matchQuery && matchKat && matchStatus) {
+                    filtered.push(b);
+                }
+            }
+
+            if (state.sort === 'judul') {
+                filtered.sort(function (a, b) { return a.judul.localeCompare(b.judul); });
+            } else if (state.sort === 'rating') {
+                filtered.sort(function (a, b) { return b.rating - a.rating; });
+            } else if (state.sort === 'tahun') {
+                filtered.sort(function (a, b) { return b.tahun - a.tahun; });
+            }
+
+            var total = filtered.length;
+            var totalPages = Math.max(1, Math.ceil(total / state.perPage));
+            if (state.page > totalPages) state.page = totalPages;
+
+            var startIdx = (state.page - 1) * state.perPage;
+            var paginated = filtered.slice(startIdx, startIdx + state.perPage);
+
+            resCount.innerHTML = 'Menampilkan <strong>' + paginated.length + '</strong> dari <strong>' + total + '</strong> buku';
+
+            if (paginated.length === 0) {
+                grid.innerHTML = '';
+                emptyMsg.classList.remove('hidden');
+                renderPagination(0, totalPages);
+                return;
+            }
+
+            emptyMsg.classList.add('hidden');
+            grid.innerHTML = '';
+
+            for (var j = 0; j < paginated.length; j++) {
+                var buku = paginated[j];
+                var statusClass = buku.status === 'Tersedia' ? 'badge-green' : 'badge-red';
+                var disabled = buku.status === 'Dipinjam' ? 'disabled style="opacity:.5;"' : '';
+
+                var cardHTML = '<article class="book-card" onclick="openBookModal(' + buku.id + ')" tabindex="0">';
+                cardHTML += '<div class="book-cover" style="background:' + buku.warna + ';">';
+                cardHTML += '<i class="fas ' + buku.icon + ' fa-2x"></i>';
+                cardHTML += '<span class="status-tag ' + statusClass + '">' + buku.status + '</span>';
+                cardHTML += '</div>';
+                cardHTML += '<div class="book-body">';
+                cardHTML += '<span class="badge badge-blue">' + buku.kategori + '</span>';
+                cardHTML += '<p class="book-title">' + buku.judul + '</p>';
+                cardHTML += '<p class="book-author">' + buku.penulis + ' &bull; ' + buku.tahun + '</p>';
+                cardHTML += '<p class="book-rating"><i class="fas fa-star"></i> ' + buku.rating.toFixed(1) + '</p>';
+                cardHTML += '<div class="book-actions">';
+                cardHTML += '<button class="btn btn-primary btn-sm" ' + disabled + ' onclick="event.stopPropagation();pinjamLangsung(' + buku.id + ')"><i class="fas fa-book-reader"></i> Pinjam</button>';
+                cardHTML += '<button class="btn btn-outline btn-sm" onclick="event.stopPropagation();openBookModal(' + buku.id + ')">Detail</button>';
+                cardHTML += '</div></div></article>';
+
+                grid.innerHTML += cardHTML;
+            }
+
+            renderPagination(total, totalPages);
+        }
+
+        function renderPagination(total, totalPages) {
+            var pag = document.getElementById('pagination');
+            if (total === 0) { pag.innerHTML = ''; return; }
+
+            var html = '<button class="page-btn" onclick="changePage(' + (state.page - 1) + ')"' + (state.page === 1 ? ' disabled' : '') + '><i class="fas fa-chevron-left"></i></button>';
+            for (var i = 1; i <= totalPages; i++) {
+                var active = i === state.page ? ' active' : '';
+                html += '<button class="page-btn' + active + '" onclick="changePage(' + i + ')">' + i + '</button>';
+            }
+            html += '<button class="page-btn" onclick="changePage(' + (state.page + 1) + ')"' + (state.page === totalPages ? ' disabled' : '') + '><i class="fas fa-chevron-right"></i></button>';
+            pag.innerHTML = html;
+        }
+
+        function changePage(p) {
+            if (p < 1) return;
+            state.page = p;
+            renderGrid();
+            window.scrollTo({ top: 300, behavior: 'smooth' });
+        }
+
+        function openBookModal(id) {
+            var buku = null;
+            for (var i = 0; i < BUKU_DATA.length; i++) {
+                if (BUKU_DATA[i].id === id) { buku = BUKU_DATA[i]; break; }
+            }
+            if (!buku) return;
+            state.selected = id;
+
+            document.getElementById('modalBookTitle').textContent = buku.judul;
+            var pinjamBtn = document.getElementById('modalPinjamBtn');
+            pinjamBtn.disabled = buku.status === 'Dipinjam';
+            pinjamBtn.innerHTML = buku.status === 'Dipinjam'
+                ? '<i class="fas fa-times"></i> Sedang Dipinjam'
+                : '<i class="fas fa-book-reader"></i> Pinjam Buku Ini';
+            pinjamBtn.style.opacity = buku.status === 'Dipinjam' ? '.6' : '1';
+
+            var statusClass = buku.status === 'Tersedia' ? 'badge-green' : 'badge-red';
+            var content = '<div class="book-detail-header">';
+            content += '<div class="book-detail-cover" style="background:' + buku.warna + ';"><i class="fas ' + buku.icon + ' fa-2x"></i></div>';
+            content += '<div>';
+            content += '<h3 style="margin-bottom:.25rem;">' + buku.judul + '</h3>';
+            content += '<p style="color:var(--gray);font-size:.9rem;margin-bottom:.5rem;">' + buku.penulis + '</p>';
+            content += '<div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.5rem;">';
+            content += '<span class="badge badge-blue">' + buku.kategori + '</span>';
+            content += '<span class="badge ' + statusClass + '">' + buku.status + '</span>';
+            content += '</div>';
+            content += '<p style="font-size:.8rem;color:var(--gray);">ISBN: ' + buku.isbn + ' &bull; ' + buku.tahun + '</p>';
+            content += '<p style="font-size:.85rem;font-weight:600;color:var(--secondary-dark);margin-top:.4rem;"><i class="fas fa-star"></i> ' + buku.rating.toFixed(1) + ' / 5.0</p>';
+            content += '</div></div>';
+            content += '<p class="book-detail-desc">' + buku.deskripsi + '</p>';
+
+            document.getElementById('modalBookContent').innerHTML = content;
+            toggleModal('bookModal', true);
+        }
+
+        function pinjamBuku() {
+            for (var i = 0; i < BUKU_DATA.length; i++) {
+                if (BUKU_DATA[i].id === state.selected) {
+                    if (BUKU_DATA[i].status === 'Dipinjam') return;
+                    BUKU_DATA[i].status = 'Dipinjam';
+                    showToast('Berhasil meminjam "' + BUKU_DATA[i].judul + '"!', 'success');
+                    break;
+                }
+            }
+            toggleModal('bookModal', false);
+            renderGrid();
+        }
+
+        function pinjamLangsung(id) {
+            for (var i = 0; i < BUKU_DATA.length; i++) {
+                if (BUKU_DATA[i].id === id) {
+                    if (BUKU_DATA[i].status === 'Dipinjam') return;
+                    BUKU_DATA[i].status = 'Dipinjam';
+                    showToast('Berhasil meminjam "' + BUKU_DATA[i].judul + '"!', 'success');
+                    break;
+                }
+            }
+            renderGrid();
+        }
+
+        document.getElementById('searchBtn').addEventListener('click', function () {
+            state.query = document.getElementById('searchInput').value.trim();
+            state.page = 1;
+            renderGrid();
+        });
+
+        document.getElementById('searchInput').addEventListener('input', function () {
+            state.query = this.value.trim();
+            state.page = 1;
+            renderGrid();
+        });
+
+        document.getElementById('sortSelect').addEventListener('change', function () {
+            state.sort = this.value;
+            state.page = 1;
+            renderGrid();
+        });
+
+        document.querySelectorAll('.filter-kategori').forEach(function (cb) {
+            cb.addEventListener('change', function () {
+                state.kategori = [];
+                document.querySelectorAll('.filter-kategori:checked').forEach(function (c) {
+                    state.kategori.push(c.value);
+                });
+                state.page = 1;
+                renderGrid();
+            });
+        });
+
+        document.querySelectorAll('.filter-status').forEach(function (cb) {
+            cb.addEventListener('change', function () {
+                state.status = [];
+                document.querySelectorAll('.filter-status:checked').forEach(function (c) {
+                    state.status.push(c.value);
+                });
+                state.page = 1;
+                renderGrid();
+            });
+        });
+
+        document.getElementById('resetFilter').addEventListener('click', function () {
+            document.querySelectorAll('.filter-kategori, .filter-status').forEach(function (cb) { cb.checked = true; });
+            document.getElementById('searchInput').value = '';
+            document.getElementById('sortSelect').value = 'default';
+            state = { query: '', kategori: ['Fiksi', 'Non-Fiksi', 'Anak-Anak', 'Sains', 'Sejarah', 'Motivasi'], status: ['Tersedia', 'Dipinjam'], sort: 'default', page: 1, perPage: 12, selected: null };
+            renderGrid();
+            showToast('Filter direset', 'info');
+        });
+
+        renderGrid();
+    </script>
+</body>
+
+</html>
